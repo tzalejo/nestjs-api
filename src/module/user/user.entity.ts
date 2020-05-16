@@ -1,4 +1,5 @@
-import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn } from "typeorm";
+import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, JoinColumn, OneToMany } from "typeorm";
+import { Formulario } from "../formulario/formulario.entity";
 
 @Entity('users') //este decorador para indicar que se convierta en una tabla 
 export class User extends BaseEntity {
@@ -11,7 +12,7 @@ export class User extends BaseEntity {
   @Column({type: 'varchar', length: 60, nullable: false})
   apellido: string;
 
-  @Column({type: 'varchar', length: 60, nullable: false})
+  @Column({type: 'varchar', length: 150, nullable: false})
   email: string;
 
   @Column({type: 'varchar', nullable: false})
