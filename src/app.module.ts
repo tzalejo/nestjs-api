@@ -9,9 +9,12 @@ import { ConfigService } from "./config/config.service";
 
 import { AppController } from './app.controller';
 import { AuthModule } from './module/auth/auth.module';
+import { ClienteModule } from './module/cliente/cliente.module';
+import { ProveedorModule } from './module/proveedor/proveedor.module';
+import { FormularioModule } from './module/formulario/formulario.module';
 
 @Module({
-  imports: [ConfigModule, DatabaseModule, UserModule, AuthModule],
+  imports: [ConfigModule, DatabaseModule, UserModule, AuthModule, ClienteModule, ProveedorModule, FormularioModule],
   controllers: [AppController],
   providers: [AppService],
 })
