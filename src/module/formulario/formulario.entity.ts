@@ -1,6 +1,7 @@
 import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
 import { estado } from './../../shared/entity-estado.num';
 import { User } from "../user/user.entity";
+import { Cliente } from "../cliente/cliente.entity";
 
 @Entity('formularios')
 export class Formulario extends BaseEntity {
@@ -55,11 +56,17 @@ export class Formulario extends BaseEntity {
 
   @Column({type: 'float'})
   ganancia_criptomoneda: number;
-  
+
   // un formulario pertenece a un usuario (relacion muchos a uno)
   @ManyToOne( () => User, user=> user.formularios, {
     nullable: false,
   } )
   user:User;
+
+  // un formulario pertenece a un cliente (relacion muchos a uno)
+  @ManyToOne( () => Cliente, cliente=> cliente.formularios, {
+    nullable: false,
+  } )
+  cliente: Cliente;
 
 }
