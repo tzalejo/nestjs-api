@@ -2,6 +2,7 @@ import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "t
 import { estado } from './../../shared/entity-estado.num';
 import { User } from "../user/user.entity";
 import { Cliente } from "../cliente/cliente.entity";
+import { Proveedor } from "../proveedor/proveedor.entity";
 
 @Entity('formularios')
 export class Formulario extends BaseEntity {
@@ -68,5 +69,11 @@ export class Formulario extends BaseEntity {
     nullable: false,
   } )
   cliente: Cliente;
+
+  // un formulario pertenece a un proveedor (relacion muchos a uno)
+  @ManyToOne( () => Proveedor, proveedor=> proveedor.formularios, {
+    nullable: false,
+  } )
+  proveedor: Proveedor;
 
 }
