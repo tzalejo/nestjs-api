@@ -24,4 +24,11 @@ export class User extends BaseEntity {
   @UpdateDateColumn({ type: 'timestamp', name: 'updated_at' })
   updatedAt: Date;
 
+  // un usuario tiene muchos formularios (relacion uno a muchos)
+  @OneToMany(type => Formulario, formulario => formulario.user,{
+    eager: true,
+    nullable: false,
+  })
+  formularios: Formulario[];
+
 }

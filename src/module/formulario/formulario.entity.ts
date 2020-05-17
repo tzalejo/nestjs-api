@@ -56,5 +56,10 @@ export class Formulario extends BaseEntity {
   @Column({type: 'float'})
   ganancia_criptomoneda: number;
   
+  // un formulario pertenece a un usuario (relacion muchos a uno)
+  @ManyToOne( () => User, user=> user.formularios, {
+    nullable: false,
+  } )
+  user:User;
 
 }
