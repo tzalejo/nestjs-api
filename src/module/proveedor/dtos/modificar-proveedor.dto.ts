@@ -5,7 +5,7 @@ export class ModificarProveedorDto {
   readonly DNI: number;
 
   @IsString()
-  @MaxLength(60)
+  @MaxLength(60, {message: 'El tamaño del Nombre no es valido'})
   readonly nombre: string;
 
   @IsString()
