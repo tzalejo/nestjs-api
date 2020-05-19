@@ -40,7 +40,7 @@ export class AuthService {
     // compara los password
     const isMatch = await compare(password, user.password);
 
-    if (isMatch) {
+    if (!isMatch) {
       throw new UnauthorizedException('Invalido las credenciales');
     }
 
