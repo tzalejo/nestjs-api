@@ -1,6 +1,6 @@
 import { Controller, Get, Param, ParseIntPipe, Post, Body, Patch, Delete } from '@nestjs/common';
 import { ProveedorService } from './proveedor.service';
-import { Proveedor } from './proveedor.entity';
+import { LeerProveedorDto, ModificarProveedorDto, CrearProveedorDto } from './dtos';
 
 @Controller('proveedor')
 export class ProveedorController {
@@ -11,27 +11,27 @@ export class ProveedorController {
   @Get(':proveedorId')
   getProveedor(
     @Param('proveedorId', ParseIntPipe) proveedorId: number
-  ): Promise<Proveedor>{
+  ): Promise<LeerProveedorDto>{
     return this._proveedorService.get(proveedorId);
   }
 
   @Get()
-  getProveedores(): Promise<Proveedor[]>{
+  getProveedores(): Promise<LeerProveedorDto[]>{
     return this._proveedorService.getAll();
   }
   
   @Post()
   crearProveedor(
-    @Body() proveedor: Proveedor
-  ): Promise<Proveedor>{
+    @Body() proveedor: Partial<CrearProveedorDto>
+  ): Promise<LeerProveedorDto>{
     return this._proveedorService.crear(proveedor);
   }
 
   @Patch(':proveedorId')
   updateProveedor(
     @Param('proveedorId', ParseIntPipe) proveedorId: number,
-    @Body() proveedor: Proveedor
-  ): Promise<Proveedor>{
+    @Body() proveedor: Partial<ModificarProveedorDto>
+  ): Promise<LeerProveedorDto>{
     return this._proveedorService.update(proveedorId, proveedor);
   }
 
