@@ -2,6 +2,8 @@ import { Injectable, BadRequestException, NotFoundException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserRepository } from './user.repository';
 import { User } from './user.entity';
+import { LeerUserDto, ModificarUserDto } from './dto';
+import { plainToClass } from 'class-transformer';
 
 @Injectable()
 export class UserService {
@@ -10,32 +12,26 @@ export class UserService {
     private readonly _userRepository: UserRepository,
   ){}
   
-  async get(userId: number): Promise<User>{
-    if(!userId) {
-      throw new BadRequestException('Es necesario el usuario');
-    }
+  async get(userId: number): Promise<LeerUserDto>{
+    // verifico el id q envia
+    if(!userId) throw new BadRequestException('Es necesario el usuario');
     const user: User = await this._userRepository.findOne(userId);
-    if (!user) {
-      throw new NotFoundException('Usuario no existe');
-    }
-    return user;
+    // verifico si hay usuario
+    if (!user) throw new NotFoundException('Usuario no existe');
+    // retorno user casteado 
+    return plainToClass(LeerUserDto, user) ;
   }
 
-  async getAll(): Promise<User[]>{
-    const users: User[] = await this._userRepository.find();
-    if (!users) {
-      throw new NotFoundException('Usuario no existe');
-    }
-    return users;
+  async getAll(): Promise<LeerUserDto[]>{
+    const users: User[] = await this._userRepository.find({ order: {'id':'ASC'} });
+    // verfico si hay usuarios
+    if (!users) throw new NotFoundException('Usuario no existe');
+    return users.map((user: User) => plainToClass(LeerUserDto, user));
   }
-  async update(userId: number, user: User): Promise<User> {
-    if(!userId) {
-      throw new BadRequestException('Es necesario el usuario');
-    }
+  async update(userId: number, user: Partial<ModificarUserDto>): Promise<LeerUserDto> {
+    if(!userId) throw new BadRequestException('Es necesario el usuario');
     const userExiste: User = await this._userRepository.findOne(userId);
-    if (!userExiste) {
-      throw new NotFoundException('El usuario no existe');
-    }
+    if (!userExiste) throw new NotFoundException('El usuario no existe');
 
     // actualizo
     userExiste.name = user.name;
@@ -47,9 +43,7 @@ export class UserService {
   }
 
   async delete(userId: number):Promise<void>{
-    if(!userId) {
-      throw new BadRequestException('Es necesario el usuario');
-    }
+    if(!userId) throw new BadRequestException('Es necesario el usuario');
     await this._userRepository.delete(userId);
   }
 

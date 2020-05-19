@@ -1,9 +1,9 @@
-import { Controller, Get, Param, Body, Post, Patch, Delete, ParseIntPipe, UseGuards  } from '@nestjs/common';
+import { Controller, Get, Param, Body, Patch, Delete, ParseIntPipe, UseGuards  } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { UserService } from './user.service';
-import { User } from './user.entity';
+import { LeerUserDto, ModificarUserDto } from './dto';
 
-@Controller('users') // Ruta: api/users/
+@Controller('user') // Ruta: api/users/
 export class UserController {
   constructor(
     private readonly _userService: UserService,
@@ -15,26 +15,26 @@ export class UserController {
   @Get(':userId')
   // @Roles(RoleType​​.ADMINSTRATOR, 'AUTHOR')
   // @UseGuards(AuthGuard())
-  getUser(@Param('userId', ParseIntPipe) userId: number): Promise<User> {
+  getUser(@Param('userId', ParseIntPipe) userId: number): Promise<LeerUserDto> {
     return this._userService.get(userId);
   }
 
   @Get()
-  @UseGuards(AuthGuard())
-  getUsers(): Promise<User[]>{
+  // @UseGuards(AuthGuard())
+  getUsers(): Promise<LeerUserDto[]>{
     return this._userService.getAll();
   }
 
   @Patch(':userId')
   updateUser(
     @Param('userID', ParseIntPipe) userId: number,
-    @Body() user: User,
-  ){
+    @Body() user: Partial<ModificarUserDto>,
+  ): Promise<LeerUserDto>{
     return this._userService.update(userId, user);
   }
 
   @Delete(':userId')
-  deleteUser(@Param('userId', ParseIntPipe) userId: number ){
+  deleteUser(@Param('userId', ParseIntPipe) userId: number ): Promise<void>{
     return this._userService.delete(userId);
   }
   
