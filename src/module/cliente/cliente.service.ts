@@ -21,7 +21,7 @@ export class ClienteService {
   }
 
   async getAll(): Promise<LeerClienteDto[]> {
-    const clientes = await (await this._clienteRepository.find()).sort();
+    const clientes = await this._clienteRepository.find({ order: { 'id':'ASC' } });
     if(!clientes) throw new NotFoundException('No existen clientes');
 
     // Devolvemos todo los elemento 

@@ -21,7 +21,7 @@ export class ProveedorService {
   }
 
   async getAll(): Promise<LeerProveedorDto[]>{
-    const proveedores: Proveedor[] = await this._proveedorRepository.find();
+    const proveedores: Proveedor[] = await this._proveedorRepository.find({ order: { 'id':'ASC' } });
     if(!proveedores) throw new NotFoundException('Proveedor no existe');
     return proveedores.map((proveedor: Proveedor) => plainToClass(LeerFormularioDto, proveedor));
   }
