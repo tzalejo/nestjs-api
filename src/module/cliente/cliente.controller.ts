@@ -1,6 +1,6 @@
 import { Controller, Get, ParseIntPipe, Param, Patch, Body, Post, Delete } from '@nestjs/common';
 import { ClienteService } from './cliente.service';
-import { Cliente } from './cliente.entity';
+import { LeerClienteDto, CrearClienteDto, ModificarClienteDto } from './dtos';
 
 @Controller('cliente')
 export class ClienteController {
@@ -11,27 +11,27 @@ export class ClienteController {
   @Get(':clienteId')
   get(
     @Param('clienteId', ParseIntPipe) clienteId: number 
-  ): Promise<Cliente> {
+  ): Promise<LeerClienteDto> {
     return this._clienteService.get(clienteId);
   }
 
   @Get()
-  getAll(): Promise<Cliente[]> {
+  getAll(): Promise<LeerClienteDto[]> {
     return this._clienteService.getAll();
   }
 
   @Post()
   creearCliente(
-    @Body() cliente: Cliente
-  ): Promise<Cliente> {
+    @Body() cliente: Partial<CrearClienteDto>
+  ): Promise<LeerClienteDto> {
     return this._clienteService.crear(cliente);
   }
 
   @Patch(':clienteId')
   updatecliente(
     @Param('clienteId', ParseIntPipe) clienteId: number,
-    @Body() cliente: Cliente
-  ): Promise<Cliente>{
+    @Body() cliente: Partial<ModificarClienteDto>
+  ): Promise<LeerClienteDto>{
     return this._clienteService.update(clienteId, cliente);
   }
 
