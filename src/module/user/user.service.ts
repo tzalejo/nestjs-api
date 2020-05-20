@@ -39,7 +39,7 @@ export class UserService {
     userExiste.email = user.email;
     // guardo
     const userUpdate = await this._userRepository.save(userExiste);
-    return userUpdate;
+    return plainToClass(LeerUserDto, userUpdate);
   }
 
   async delete(userId: number):Promise<void>{
