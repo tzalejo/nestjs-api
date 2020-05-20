@@ -31,6 +31,9 @@ export class ClienteService {
   // el parcial indicamos que los campos pueden ser los q estan en el dto.
   async crear(cliente: Partial<CrearClienteDto>): Promise<LeerClienteDto> {
     if(!cliente) throw new BadRequestException('El cliente es necesario');
+    // convierto en mayuscula la primera letra d cada palabra
+    cliente.nombre = cliente.nombre.toLowerCase().replace(/\b[a-z]/g, letter => letter.toUpperCase());
+    cliente.apellido = cliente.apellido.toLowerCase().replace(/\b[a-z]/g, letter => letter.toUpperCase());
     const clienteNuevo = await this._clienteRepository.save(cliente);
     return plainToClass(LeerClienteDto, clienteNuevo);
   }
@@ -41,8 +44,9 @@ export class ClienteService {
     if(!clienteUpdate) throw new NotFoundException('No existe el cliente');
     // actualizo
     clienteUpdate.DNI = cliente.DNI;
-    clienteUpdate.nombre = cliente.nombre;
-    clienteUpdate.apellido = cliente.apellido;
+    // convierto en mayuscula la primera letra d cada palabra
+    clienteUpdate.nombre = cliente.nombre.toLowerCase().replace(/\b[a-z]/g, letter => letter.toUpperCase());
+    clienteUpdate.apellido = cliente.apellido.toLowerCase().replace(/\b[a-z]/g, letter => letter.toUpperCase());
     clienteUpdate.telefono = cliente.telefono;
     clienteUpdate.email = cliente.email;
     // guardo y retorno..
