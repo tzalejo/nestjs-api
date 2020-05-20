@@ -59,19 +59,22 @@ export class Formulario extends BaseEntity {
   ganancia_criptomoneda: number;
 
   // un formulario pertenece a un usuario (relacion muchos a uno)
-  @ManyToOne( () => User, user=> user.formularios, {
+  @ManyToOne( type => User, user=> user.formularios, {
+    eager: true,
     nullable: false,
   } )
   user:User;
 
   // un formulario pertenece a un cliente (relacion muchos a uno)
-  @ManyToOne( () => Cliente, cliente=> cliente.formularios, {
+  @ManyToOne( type => Cliente, cliente=> cliente.formularios, {
+    eager: true,
     nullable: false,
   } )
   cliente: Cliente;
 
   // un formulario pertenece a un proveedor (relacion muchos a uno)
-  @ManyToOne( () => Proveedor, proveedor=> proveedor.formularios, {
+  @ManyToOne( type => Proveedor, proveedor=> proveedor.formularios, {
+    eager: true,
     nullable: false,
   } )
   proveedor: Proveedor;
