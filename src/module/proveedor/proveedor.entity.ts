@@ -23,7 +23,7 @@ export class Proveedor extends BaseEntity{
 
   // un proveedor tiene muchos formularios (relacion uno a muchos)
   @OneToMany(() => Formulario, formulario => formulario.proveedor,{
-    eager: true,
+    // eager: true,
     nullable: false,
   })
   formularios: Formulario[];

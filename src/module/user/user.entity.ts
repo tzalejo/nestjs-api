@@ -1,4 +1,4 @@
-import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, JoinColumn, OneToMany } from "typeorm";
+import { BaseEntity, Entity, PrimaryGeneratedColumn, Column, UpdateDateColumn, OneToMany } from "typeorm";
 import { Formulario } from "../formulario/formulario.entity";
 
 @Entity('users') //este decorador para indicar que se convierta en una tabla 
@@ -25,8 +25,8 @@ export class User extends BaseEntity {
   updatedAt: Date;
 
   // un usuario tiene muchos formularios (relacion uno a muchos)
-  @OneToMany(type => Formulario, formulario => formulario.user,{
-    eager: true,
+  @OneToMany(() => Formulario, formulario => formulario.user,{
+    // eager: true,
     nullable: false,
   })
   formularios: Formulario[];

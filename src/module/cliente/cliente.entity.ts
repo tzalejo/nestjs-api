@@ -23,7 +23,7 @@ export class Cliente extends BaseEntity{
 
   // un cliente tiene muchos formularios (relacion uno a muchos)
   @OneToMany(() => Formulario, formulario => formulario.cliente,{
-    eager: true,
+    // eager: true,
     nullable: false,
   })
   formularios: Formulario[];
