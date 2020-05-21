@@ -10,8 +10,8 @@ export class AuthRepository extends Repository<User> {
   async signup(signupDto: SignupDto) {
     const { name, apellido, email, password } = signupDto;
     const user = new User();
-    user.name = name;
-    user.apellido = apellido;
+    user.name = name.toLowerCase().replace(/\b[a-z]/g, letter => letter.toUpperCase());
+    user.apellido = apellido.toLowerCase().replace(/\b[a-z]/g, letter => letter.toUpperCase());
     user.email = email;
     // generar salt(es un nro q se agrega al hash) para nuestro password
     const salt = await genSalt(10); // genera un nro d 10 caracteres
