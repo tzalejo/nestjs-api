@@ -2,7 +2,6 @@ import { Controller, Get, Param, Body, Patch, Delete, ParseIntPipe, UseGuards  }
 import { AuthGuard } from '@nestjs/passport';
 import { UserService } from './user.service';
 import { LeerUserDto, ModificarUserDto } from './dto';
-
 @Controller('user') // Ruta: api/users/
 export class UserController {
   constructor(
@@ -12,15 +11,15 @@ export class UserController {
   // ParseIntPipe es para parsear el valor que viene como un objeto= {id:'1'}
   // este comportamiento es normal de nodejs, si se quiere parsear los params a un tipo
   // number se debe crear un middleware. En nest esto se resuelve con un pipe: ParseIntPipe
+  @UseGuards(AuthGuard())
   @Get(':userId')
   // @Roles(RoleType​​.ADMINSTRATOR, 'AUTHOR')
-  // @UseGuards(AuthGuard())
   getUser(@Param('userId', ParseIntPipe) userId: number): Promise<LeerUserDto> {
     return this._userService.get(userId);
   }
 
+  // @UseGuards(AuthGuard('jwt'))
   @Get()
-  // @UseGuards(AuthGuard())
   getUsers(): Promise<LeerUserDto[]>{
     return this._userService.getAll();
   }

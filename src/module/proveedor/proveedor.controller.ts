@@ -1,4 +1,5 @@
-import { Controller, Get, Param, ParseIntPipe, Post, Body, Patch, Delete } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Post, Body, Patch, Delete, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { ProveedorService } from './proveedor.service';
 import { LeerProveedorDto, ModificarProveedorDto, CrearProveedorDto } from './dtos';
 
@@ -8,6 +9,7 @@ export class ProveedorController {
     private readonly _proveedorService: ProveedorService,
   ){}
 
+  @UseGuards(AuthGuard())
   @Get(':proveedorId')
   getProveedor(
     @Param('proveedorId', ParseIntPipe) proveedorId: number
@@ -15,11 +17,13 @@ export class ProveedorController {
     return this._proveedorService.get(proveedorId);
   }
 
+  @UseGuards(AuthGuard())
   @Get()
   getProveedores(): Promise<LeerProveedorDto[]>{
     return this._proveedorService.getAll();
   }
   
+  @UseGuards(AuthGuard())
   @Post()
   crearProveedor(
     @Body() proveedor: Partial<CrearProveedorDto>
@@ -27,6 +31,7 @@ export class ProveedorController {
     return this._proveedorService.crear(proveedor);
   }
 
+  @UseGuards(AuthGuard())
   @Patch(':proveedorId')
   updateProveedor(
     @Param('proveedorId', ParseIntPipe) proveedorId: number,
@@ -35,6 +40,7 @@ export class ProveedorController {
     return this._proveedorService.update(proveedorId, proveedor);
   }
 
+  @UseGuards(AuthGuard())
   @Delete(':proveedorId')
   deleteProveedor(
     @Param('proveedorId', ParseIntPipe) proveedorId: number

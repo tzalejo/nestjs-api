@@ -1,4 +1,5 @@
-import { Controller, Get, Body, Post, Patch, Param, ParseIntPipe, Delete } from '@nestjs/common';
+import { Controller, Get, Body, Post, Patch, Param, ParseIntPipe, Delete, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { BuscarFormularioDto, CrearFormularioDto, LeerFormularioDto, ModificarFormularioDto } from './dtos';
 import { FormularioService } from './formulario.service';
 @Controller('formulario')
@@ -6,7 +7,8 @@ export class FormularioController {
   constructor(
     private readonly _formularioService: FormularioService
   ) {}
-  
+
+  @UseGuards(AuthGuard())
   @Get()
   buscarFormulario(
     @Body() buscarFormularioDto: BuscarFormularioDto
@@ -14,12 +16,14 @@ export class FormularioController {
     console.log('buscarFormularioDto', buscarFormularioDto);
     return this._formularioService.getBuscarFormulario(buscarFormularioDto);
   }
-
+  
+  @UseGuards(AuthGuard())
   @Post()
   crearFormulario(@Body() formulario: CrearFormularioDto): Promise<LeerFormularioDto>{
     return this._formularioService.crear(formulario);
   }
 
+  @UseGuards(AuthGuard())
   @Patch(':formularioId')
   modificarFormulario(
     @Param('formularioId', ParseIntPipe) formularioId: number,
@@ -28,6 +32,7 @@ export class FormularioController {
     return this._formularioService.update(formularioId, formulario);
   }
 
+  @UseGuards(AuthGuard())
   @Delete(':formularioId')
   deleteFormulario(@Param('formularioId', ParseIntPipe) formularioId: number): Promise<void>{
     return this._formularioService.delete(formularioId);
