@@ -3,5 +3,5 @@ export interface IJwtPayload {
   name: string;
   apellido: string;
   email: string;
-  ait?: Date; // fecha de expiracion..es opcional.
+  ait?: Date; // fecha de expiracion del toke..es opcional.
 }
