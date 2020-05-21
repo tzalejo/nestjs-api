@@ -23,7 +23,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   // se va a encargar de validar si el usuario existe..
-  async validateUser(paylaod: IJwtPayload){
+  async validate(paylaod: IJwtPayload){
     const { email } = paylaod;
     // utilizamos repositorio autenticacion para buscar el usuario q corresponda con ese email
     const user = await this._authRepository.findOne({ where: {email} });
