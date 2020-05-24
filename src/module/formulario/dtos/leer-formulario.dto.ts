@@ -2,9 +2,13 @@ import { IsNumber, IsString, IsDate } from 'class-validator';
 import { Exclude, Expose, Type } from 'class-transformer'
 import { Cliente } from './../../cliente/cliente.entity';
 import { Proveedor } from './../../proveedor/proveedor.entity';
+import { User } from './../../user/user.entity';
 
 @Exclude()
 export class LeerFormularioDto {
+  @Expose()
+  @IsNumber()
+  readonly id: number;
 
   @Expose()  
   @IsString()
@@ -77,6 +81,10 @@ export class LeerFormularioDto {
   @Expose()
   @Type(() => Proveedor)
   readonly proveedor: Proveedor;
+
+  @Expose()
+  @Type(() => User)
+  readonly user: User;
 
     // @Expose()
   // @IsNumber()
