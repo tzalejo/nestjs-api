@@ -1,4 +1,4 @@
-import { Controller, Get, Body, Post, Patch, Param, ParseIntPipe, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Body, Post, Patch, Param, ParseIntPipe, Delete, UseGuards, Query, Req } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { BuscarFormularioDto, CrearFormularioDto, LeerFormularioDto, ModificarFormularioDto } from './dtos';
 import { FormularioService } from './formulario.service';
@@ -11,9 +11,9 @@ export class FormularioController {
   @UseGuards(AuthGuard())
   @Get()
   buscarFormulario(
-    @Body() buscarFormularioDto: BuscarFormularioDto
+    @Query() buscarFormularioDto: BuscarFormularioDto
   ): Promise<LeerFormularioDto[]>{
-    console.log('buscarFormularioDto', buscarFormularioDto);
+    // console.log('buscarFormularioDto', buscarFormularioDto);
     return this._formularioService.getBuscarFormulario(buscarFormularioDto);
   }
   

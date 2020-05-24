@@ -4,22 +4,46 @@ import { BuscarFormularioDto, ModificarFormularioDto, LeerFormularioDto, CrearFo
 import { Formulario } from './formulario.entity';
 import { plainToClass } from 'class-transformer';
 import { estado } from './../../shared/entity-estado.num';
-
+import {  getRepository } from "typeorm";
 @Injectable()
 export class FormularioService {
   constructor(
     private readonly _formularioRepository: FormularioRepository,
   ){}
   
-  async getBuscarFormulario(buscarFormularioDto: BuscarFormularioDto): Promise<LeerFormularioDto[]> {
-    if(!buscarFormularioDto) {
-      const formulariosFiltrado: Formulario[] =  await this._formularioRepository.find();
-      return formulariosFiltrado.map((formulario: Formulario) => plainToClass(LeerFormularioDto, formulario));
+  async getBuscarFormulario(buscaFDto: Partial<BuscarFormularioDto>):Promise<LeerFormularioDto[]>{
+    // creo el query
+    const busquedaForm = getRepository(Formulario).createQueryBuilder('formulario')
+                                              .innerJoinAndSelect('formulario.cliente', 'cliente')
+                                              .innerJoinAndSelect('formulario.proveedor', 'proveedor');
+    // realizo los filtros
+    if (buscaFDto.user){
+      busquedaForm.where('formulario.user = :user', { user: buscaFDto.user});
     }
-    const formulariosFiltrado: Formulario[] = await this._formularioRepository.find({where: buscarFormularioDto});
-    // casteo todo los elementode del formulario
-    return formulariosFiltrado.map((formulario: Formulario) => plainToClass(LeerFormularioDto, formulario));
-
+    if (buscaFDto.compra_moneda){
+      busquedaForm.andWhere('formulario.compra_moneda like :compraMoneda', { compraMoneda: `%${buscaFDto.compra_moneda}%`});
+    }
+    if (buscaFDto.tipo_criptomoneda){
+      busquedaForm.andWhere('formulario.tipo_criptomoneda like :tipoCriptomoneda', { tipoCriptomoneda: `%${buscaFDto.tipo_criptomoneda}%`});
+    }
+    if (buscaFDto.estado){
+      busquedaForm.andWhere('formulario.estado like :estado', { estado: `%${buscaFDto.estado}%` });
+    }
+    if (buscaFDto.fechaDesde){
+      console.log( buscaFDto.fechaDesde);
+      busquedaForm.andWhere('formulario.fecha_compra >= :fechaDesde', { fechaDesde: buscaFDto.fechaDesde});
+    }
+    if (buscaFDto.fechaHasta){
+      busquedaForm.andWhere('formulario.fecha_compra <= :fechaHasta', { fechaHasta: buscaFDto.fechaHasta});
+    }
+    if (buscaFDto.cliente){
+      busquedaForm.andWhere('formulario.cliente = :cliente', { cliente: buscaFDto.cliente});
+    }
+    // ejecuto el query
+    const resultado: Formulario[] = await busquedaForm.getMany();
+    // casteo todo los elemento del formulario
+    resultado.map((formulario: Formulario) => plainToClass(LeerFormularioDto, formulario));
+    return resultado
   }
 
   async update(
@@ -29,6 +53,7 @@ export class FormularioService {
     if(!formularioId) throw new BadRequestException('Error en los parametros');
     const formularioExiste: Formulario = await this._formularioRepository.findOne(formularioId);
     if(!formularioExiste) throw new NotFoundException('El formulario no existe ');
+    if(formularioExiste.estado === estado.VENTA) throw new ConflictException('El formulario es una venta, no se puede actualizar.');
     //acutalizo
     formularioExiste.web = formulario.web.toLowerCase().replace(/\b[a-z]/g, letter => letter.toUpperCase()); // eslint-disable-next-line @typescript-eslint/camelcase
     formularioExiste.compra_moneda = formulario.compra_moneda.toLowerCase().replace(/\b[a-z]/g, letter => letter.toUpperCase()); // eslint-disable-next-line @typescript-eslint/camelcase
@@ -40,7 +65,7 @@ export class FormularioService {
     formularioExiste.tipo_criptomoneda = formulario.tipo_criptomoneda.toLowerCase().replace(/\b[a-z]/g, letter => letter.toUpperCase()); // eslint-disable-next-line @typescript-eslint/camelcase
     formularioExiste.importe_compra = formulario.importe_compra; // eslint-disable-next-line @typescript-eslint/camelcase
     formularioExiste.fecha_compra = formulario.fecha_compra;
-    formularioExiste.fecha = formulario.fecha;
+    formularioExiste.fecha = new Date(formulario.fecha_compra);  //
     formularioExiste.dolar = formulario.dolar;
     formularioExiste.estado = formulario.estado.toUpperCase(); // eslint-disable-next-line @typescript-eslint/camelcase
     formularioExiste.costo_criptomoneda_p = formulario.costo_criptomoneda_p; // eslint-disable-next-line @typescript-eslint/camelcase
@@ -63,7 +88,7 @@ export class FormularioService {
     formulario.compra_moneda = formulario.compra_moneda.toLowerCase().replace(/\b[a-z]/g, letter => letter.toUpperCase());
     // eslint-disable-next-line @typescript-eslint/camelcase
     formulario.tipo_criptomoneda = formulario.tipo_criptomoneda.toLowerCase().replace(/\b[a-z]/g, letter => letter.toUpperCase());
-
+    formulario.fecha = new Date(formulario.fecha_compra);
     const formularioNuevo: Formulario = await this._formularioRepository.save(formulario);
     return plainToClass(LeerFormularioDto, formularioNuevo);
   }
