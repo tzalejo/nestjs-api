@@ -1,4 +1,5 @@
 import { IsNumber, IsString, IsDate } from "class-validator";
+import { Type } from 'class-transformer';
 import { Cliente } from "./../../cliente/cliente.entity";
 import { User } from "./../../user/user.entity";
 
@@ -6,10 +7,10 @@ export class BuscarFormularioDto {
   @IsString()
   readonly compra_moneda: string;
   
-  @IsNumber()
+  @Type(()=> Cliente)
   readonly cliente: Cliente;
 
-  @IsNumber()
+  @Type(() => User)
   readonly user: User;
 
   @IsString()
