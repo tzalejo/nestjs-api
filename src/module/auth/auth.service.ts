@@ -29,7 +29,7 @@ export class AuthService {
     return this._authRespository.signup(signupDto);
   }
   // Para loguearse
-  async signin(signinDto: SigninDto): Promise<{token: string}> {
+  async signin(signinDto: SigninDto): Promise<{}> {
     const { email, password } = signinDto;
     const user = await this._authRespository.findOne({
       where: {email}
@@ -54,6 +54,12 @@ export class AuthService {
     // creamos el token
     const token = await this._jwtService.sign(payload);
 
-    return {token};
+    return {
+      id: user.id,
+      name: payload.name,
+      apellido: payload.apellido,
+      email: payload.email,
+      token
+    };
   }
 }
