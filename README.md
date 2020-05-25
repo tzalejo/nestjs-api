@@ -53,4 +53,16 @@ npm i class-validator
 npm i @nestjs/passport @nestjs/jwt passport-jwt bcryptjs jsonwebtoken passport class-transformer
 # para ayuda desarrollo a typescript
 npm i -D @types/bcryptjs @types/passport @types/passport-jwt
+
+# Comando para heroku
+
+heroku create nombre # creo la aplicacion
+heroku git:remote -a nombre
+git push heroku master #subu mi app al heroku
+heroku open #abrir desde consola la heroku
+#agrego postgres
+heroku addons:create heroku-postgresql:hobby-dev
+heroku config # para ver string d configuracion para la bd, tambien podemos ir a la web 
+heroku run bash # ingresar al bash de heroku
+
 ```
