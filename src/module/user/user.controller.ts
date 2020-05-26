@@ -26,7 +26,7 @@ export class UserController {
 
   @Patch(':userId')
   updateUser(
-    @Param('userID', ParseIntPipe) userId: number,
+    @Param('userId', ParseIntPipe) userId: number,
     @Body() user: Partial<ModificarUserDto>,
   ): Promise<LeerUserDto>{
     return this._userService.update(userId, user);

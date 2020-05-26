@@ -30,9 +30,8 @@ export class UserService {
   }
   async update(userId: number, user: Partial<ModificarUserDto>): Promise<LeerUserDto> {
     if(!userId) throw new BadRequestException('Es necesario el usuario');
-    const userExiste: User = await this._userRepository.findOne(userId);
+    const userExiste: User = await this._userRepository.findOne({ id: userId });
     if (!userExiste) throw new NotFoundException('El usuario no existe');
-
     // actualizo
     userExiste.name = user.name;
     userExiste.apellido = user.apellido;
@@ -46,5 +45,5 @@ export class UserService {
     if(!userId) throw new BadRequestException('Es necesario el usuario');
     await this._userRepository.delete(userId);
   }
-
+  
 } 
