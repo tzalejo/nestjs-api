@@ -63,9 +63,10 @@ export class AuthService {
     };
   }
 
-  async enviarCorreoRegistracion(emailUser: string, pass: string, titulo = 'Registracion'): Promise<boolean> {
-    const model = await this._authRespository.findOne({ email: emailUser });
+  async enviarCorreo(fromText, emailUser: string, subjectText, plainText: string, htmlText: string):Promise<boolean> {
+    const model =  this._authRespository.findOne({ email: emailUser });
     if (model) {
+      // configuracion de nodemailer
       const transporter = nodemailer.createTransport({
         host: this._configService.get(Configuration.MAIL_HOST),
         port: parseInt(this._configService.get(Configuration.MAIL_PORT)),
@@ -78,37 +79,22 @@ export class AuthService {
           rejectUnauthorized: false
         }
       });
+      // construyo las opciones del correo
       const mailOpciones = {
-        from: `${titulo} <${this._configService.get(Configuration.MAIL_USUARIO)}>`,
-        to: emailUser, // list of receivers (separated by ,)
-        subject: `${titulo} de Usuario`,
-        text: 'Verificacion',
-        html: `
-        Hola! <br><br> Gracias por utlizar Sistema <br><br>
-        User: ${emailUser} <br>
-        Password: ${pass} <br>
-        Gracias!
-        `
-        // '<a href='+ Configuration.host.url + ':' + config.host.port +'/auth/email/verify/'+ model.emailToken + '>Click here to activate your account</a>'  // html body
+        from: `${fromText} <${this._configService.get(Configuration.MAIL_USUARIO)}>`,
+        to: emailUser,
+        subject: subjectText,
+        text: plainText,
+        html: htmlText
       };
-
-
-      const enviado = await new Promise<boolean>(async function (resolve, reject) {
-        return await transporter.sendMail(mailOpciones, async (error, info) => {
-          if (error) {
-            console.log(`Mensaje envio: ${error}`);
-            transporter.verify((err, success) => {
-              if (err) {
-                console.log(err);
-              }
-            });
-            return reject(false);
-          }
-          // console.log(`Mensaje envio: ${info.messageId}`);
-          resolve(true);
-        });
+      return await transporter.sendMail(mailOpciones, async (error, info) => {
+        if (error) {
+          console.log(`Mensaje envio: ${error}`);
+          return false;
+        }
+        console.log(`Mensaje envio: ${info.messageId}`);
+        return true;
       });
-      return enviado;
     } else {
       throw new HttpException('Registro no se pudo realizar', HttpStatus.FORBIDDEN);
     }
@@ -121,11 +107,11 @@ export class AuthService {
       return re.test(email);
     } else return false
   }
-  
+
   // reseteo password y la envio por correo.
   async resetPassworUser(email: string) {
     if (!this.isValidEmail(email)) throw new ConflictException('El mail no es valido.');
-    const usuarioReset: User = await this._authRespository.findOne({ email: email});
+    const usuarioReset: User = await this._authRespository.findOne({ email: email });
     if (!usuarioReset) throw new NotFoundException(`El usuario no existe con este correo ${email}`);
     // Gernero password de 10 digitos..
     const password = generate.generate({
@@ -133,7 +119,7 @@ export class AuthService {
       numbers: true
     });
     // genera un nro d 10 caracteres
-    const salt = await genSalt(10); 
+    const salt = await genSalt(10);
     // generamos el hast con el nro salt generado..
     const passwrodHash = await hash(password, salt);
     // almaceno nueva pass hasheado 
@@ -141,7 +127,14 @@ export class AuthService {
     const usuarioModificado = await this._authRespository.save(usuarioReset);
     // envio email con el nuevo pass
     if (!usuarioModificado) throw new NotFoundException('Se produjo un error al generar el password');
-    const enviado = await this.enviarCorreoRegistracion(email, password, 'Reset Password');
-    if (enviado) return {messaje: 'Fue enviado a su correo el nuevo password'};
+    const textForm = `
+    <br>
+    Escuchamos que perdiste tu contraseña de Bitcoin Sistema. ¡Lo siento por eso!<br>
+    Pero no te preocupes, aqui te envio el nuevos Password<br>
+    User: ${email} <br>
+    Password: ${password} <br>
+    Gracias!`;
+    const enviado = this.enviarCorreo('Pedido Reset - Bitcoin', email, 'Reset Password', 'Restablecer Password', textForm);
+    if (enviado) return { messaje: 'Fue enviado a su correo el nuevo password' };
   }
 }

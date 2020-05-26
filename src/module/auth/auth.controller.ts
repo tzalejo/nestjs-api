@@ -15,9 +15,16 @@ export class AuthController {
   ) {
     try {
       await this._authService.signup(signupDto);
-      const emailEnviado = await this._authService.enviarCorreoRegistracion(signupDto.email, signupDto.password);
-      if (emailEnviado) {
-        return true;
+      const textForm = `
+      <br>
+      Bienvenido a Bitcoin Sistema<br>
+      Sus nuevo detalles de inicio de sesión son: <br>
+      User: ${signupDto.email} <br>
+      Password: ${signupDto.password} <br>
+      Gracias!`;
+      const emailSend = this._authService.enviarCorreo('Nuevo Inicio Sesión - Bitcoin', signupDto.email, 'Registración', 'Verificación', textForm);
+      if (emailSend) {
+        return { messaje: 'Registracion se realizo correctamente.' };
       }
       throw new HttpException('Registro no se pudo realizar', HttpStatus.FORBIDDEN);
     } catch (error) {
