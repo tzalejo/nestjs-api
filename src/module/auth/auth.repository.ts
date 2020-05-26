@@ -18,6 +18,6 @@ export class AuthRepository extends Repository<User> {
     // generamos el hast ocn el nro salt generado..
     user.password = await hash(password, salt);
     // guardamos el usuario..
-    user.save();
+    await user.save();
   }
 }
