@@ -23,6 +23,7 @@ export class ConfigService {
       // si existe, estamos en desarrollo
       this.envConfig = parse(fs.readFileSync(envFilePath))
     } else { // estamos en produccion:
+      console.log('En produccion!!');
       this.envConfig = {
         PORT: process.env.PORT,
       }
